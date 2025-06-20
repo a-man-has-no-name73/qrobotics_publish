@@ -15,7 +15,8 @@ export interface Product {
 export async function getProductById(
   productId: number
 ): Promise<Product | null> {
-  try {    const sql = `
+  try {
+    const sql = `
       SELECT product_id, name, description, price, is_available, category_id, created_by
       FROM Products
       WHERE product_id = $1 AND deleted_at IS NULL
@@ -52,7 +53,8 @@ export type NewProduct = {
 };
 
 export async function createProduct(product: NewProduct) {
-  try {    const sql = `
+  try {
+    const sql = `
       INSERT INTO Products (category_id, name, description, price, is_available, created_by)
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING product_id
@@ -80,7 +82,8 @@ export async function createProduct(product: NewProduct) {
 }
 
 export async function getAllProducts(): Promise<Product[]> {
-  try {    const sql = `
+  try {
+    const sql = `
       SELECT product_id, name, description, price, is_available, category_id, created_by
       FROM Products
       WHERE deleted_at IS NULL
@@ -108,7 +111,8 @@ export async function updateProduct(
   productData: Partial<Product>
 ): Promise<Product | null> {
   try {
-    // Build the SQL update query dynamically based on which fields are provided    let sql = `
+    // Build the SQL update query dynamically based on which fields are provided
+    let sql = `
       UPDATE Products
       SET
         name = COALESCE($2, name),
@@ -118,6 +122,7 @@ export async function updateProduct(
         category_id = COALESCE($6, category_id),
         updated_at = NOW()
       WHERE product_id = $1 AND deleted_at IS NULL
+      RETURNING product_id, name, description, price, is_available, category_id, created_by
     `;
 
     const params = [
@@ -127,21 +132,20 @@ export async function updateProduct(
       productData.price,
       productData.is_available,
       productData.category_id,
-    ];
-
-    // Execute the query
+    ]; // Execute the query
     const result = await query(sql, params);
 
-    // If the affected rows is > 0, return the updated product (or null if not found)
+    // If the affected rows is > 0, return the updated product
     if (result.rowCount && result.rowCount > 0) {
+      const updatedProduct = result.rows[0];
       return {
-        product_id: productId,
-        name: productData.name ?? "",
-        description: productData.description ?? "",
-        price: productData.price ?? 0,
-        is_available: productData.is_available ?? true,
-        category_id: productData.category_id ?? 0,
-        created_by: 0, // You might want to handle `created_by` if required
+        product_id: updatedProduct.product_id,
+        name: updatedProduct.name,
+        description: updatedProduct.description,
+        price: updatedProduct.price,
+        is_available: updatedProduct.is_available,
+        category_id: updatedProduct.category_id,
+        created_by: updatedProduct.created_by,
       };
     }
 
