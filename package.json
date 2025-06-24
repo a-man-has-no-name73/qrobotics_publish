@@ -1,12 +1,14 @@
 {
-  "name": "my-v0-project",
-  "version": "0.1.0",
+  "name": "qrobotics-ecommerce",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:setup": "node scripts/setup-database.js",
+    "db:test": "node scripts/test-db.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
