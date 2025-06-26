@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "db:setup": "node scripts/setup-database.js",
-    "db:test": "node scripts/test-db.js"
+    "db:test": "node scripts/test-db.js",
+    "db:validate": "node scripts/validate-connection.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
